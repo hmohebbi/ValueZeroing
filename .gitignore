@@ -2,6 +2,3 @@
 directory/*/
 data/*/
 __pycache__/
-*.jpeg
-*.png
-*.txt
