@@ -38,9 +38,9 @@ tag = "pretrained" if FIXED else "finetuned"
 if MLM:
     tag += "_MLM"
 masking_tag = "masked" if INPUT_MASKING else "full"
-LOAD_MODEL_PATH = f"/home/hmohebbi/Projects/blank_out/directory/models/{MODEL_NAME}/{TASK}/{CHECKPOINT}_forseqclassification_{tag}.pt"
+LOAD_MODEL_PATH = f"/home/hmohebbi/Projects/ValueZeroing/directory/models/{MODEL_NAME}/{TASK}/{CHECKPOINT}_forseqclassification_{tag}.pt"
 SAVE_SCORES = False
-SAVE_SCORES_PATH = f"/home/hmohebbi/Projects/blank_out/directory/scores/{MODEL_NAME}/{TASK}/{tag}/{masking_tag}/"
+SAVE_SCORES_PATH = f"/home/hmohebbi/Projects/ValueZeroing/directory/scores/{MODEL_NAME}/{TASK}/{tag}/{masking_tag}/"
 
 
 ### Import Libraries
@@ -177,12 +177,12 @@ for step, inputs in enumerate(dataloader):
     progress_bar.update(1)
 
 
-
+xxx
 ### SAVE 
-# scores
-METRIC_NAME = 'normalized_' + METRIC.capitalize() if NORMALIZE else METRIC.capitalize()
-with open(f'{SAVE_SCORES_PATH}{CHECKPOINT}_{METRIC_NAME}_valuezeroing.pkl', 'wb') as f:
-    pickle.dump(all_valuezeroing_scores, f)
-# rollouts
-with open(f'{SAVE_SCORES_PATH}{CHECKPOINT}_rollout_{METRIC_NAME}_valuezeroing.pkl', 'wb') as f:
-    pickle.dump(all_rollout_valuezeroing_scores, f)
+if SAVE_SCORES:
+    # scores
+    with open(f'{SAVE_SCORES_PATH}{CHECKPOINT}_{METRIC.capitalize()}_valuezeroing.pkl', 'wb') as f:
+        pickle.dump(all_valuezeroing_scores, f)
+    # rollouts
+    with open(f'{SAVE_SCORES_PATH}{CHECKPOINT}_rollout_{METRIC.capitalize()}_valuezeroing.pkl', 'wb') as f:
+        pickle.dump(all_rollout_valuezeroing_scores, f)
