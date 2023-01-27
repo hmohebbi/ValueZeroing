@@ -1,5 +1,5 @@
 # Value Zeroing
-The official repo for the EACL 2023 paper "__Quantifying Context Mixing in Transformers__"
+The official repo for the [EACL 2023](https://2023.eacl.org/) paper "__Quantifying Context Mixing in Transformers__"
 
 📃[[Paper]](https://)
 
