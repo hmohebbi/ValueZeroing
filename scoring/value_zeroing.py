@@ -1,37 +1,35 @@
-# import argparse
-# parser = argparse.ArgumentParser()
-# parser.add_argument("--TASK")
-# parser.add_argument("--SPLIT")
-# parser.add_argument("--MODEL_NAME")
-# parser.add_argument("--FIXED", action="store_true")
-# parser.add_argument("--CHECKPOINT")
-# parser.add_argument("--METRIC")
-# parser.add_argument("--NORMALIZE", action="store_true")
-# parser.add_argument("--INPUT_MASKING", action="store_true")
-# parser.add_argument("--MLM", action="store_true")
-# parser.add_argument("--GPU", default=0, type=int)
-# args = parser.parse_args()
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--TASK")
+parser.add_argument("--SPLIT")
+parser.add_argument("--MODEL_NAME")
+parser.add_argument("--FIXED", action="store_true")
+parser.add_argument("--CHECKPOINT")
+parser.add_argument("--METRIC")
+parser.add_argument("--INPUT_MASKING", action="store_true")
+parser.add_argument("--MLM", action="store_true")
+parser.add_argument("--GPU", default=0, type=int)
+args = parser.parse_args()
 
-# TASK = args.TASK
-# SPLIT = args.SPLIT
-# MODEL_NAME = args.MODEL_NAME
-# FIXED = args.FIXED
-# CHECKPOINT = args.CHECKPOINT
-# METRIC = args.METRIC
-# NORMALIZE = args.NORMALIZE
-# INPUT_MASKING = args.INPUT_MASKING
-# MLM = args.MLM
-# SELECTED_GPU = args.GPU
+TASK = args.TASK
+SPLIT = args.SPLIT
+MODEL_NAME = args.MODEL_NAME
+FIXED = args.FIXED
+CHECKPOINT = args.CHECKPOINT
+METRIC = args.METRIC
+INPUT_MASKING = args.INPUT_MASKING
+MLM = args.MLM
+SELECTED_GPU = args.GPU
 
-SELECTED_GPU = 0
-MODEL_NAME = 'bert'
-FIXED = False # True for pre-trained model and False for finetuned model
-CHECKPOINT = "full" 
-METRIC = 'cosine' 
-TASK = "NA"
-SPLIT = "test"
-INPUT_MASKING = True
-MLM = True
+# SELECTED_GPU = 0
+# MODEL_NAME = 'bert'
+# FIXED = False # True for pre-trained model and False for finetuned model
+# CHECKPOINT = "full" 
+# METRIC = 'cosine' 
+# TASK = "NA"
+# SPLIT = "test"
+# INPUT_MASKING = True
+# MLM = True
 
 SEED = 42
 tag = "pretrained" if FIXED else "finetuned"
@@ -45,7 +43,7 @@ SAVE_SCORES_PATH = f"/home/hmohebbi/Projects/ValueZeroing/directory/scores/{MODE
 
 ### Import Libraries
 import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), "../..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), "..")))
 import numpy as np
 from tqdm.auto import tqdm
 import pickle
@@ -102,7 +100,7 @@ else:
 
 ### Load data
 if TASK in BLIMP_TASKS:
-    data_path = f"/home/hmohebbi/Projects/blank_out/data/BLiMP/processed_blimp/{TASK}"
+    data_path = f"/home/hmohebbi/Projects/blank_out/data/processed_blimp/{TASK}"
     data = load_from_disk(data_path)[SPLIT]
 elif TASK in GLUE_TASKS:
     data = load_dataset("glue", TASK, split=SPLIT)
@@ -177,12 +175,11 @@ for step, inputs in enumerate(dataloader):
     progress_bar.update(1)
 
 
-xxx
-### SAVE 
+### Save scores
 if SAVE_SCORES:
-    # scores
+    # Value Zeroing
     with open(f'{SAVE_SCORES_PATH}{CHECKPOINT}_{METRIC.capitalize()}_valuezeroing.pkl', 'wb') as f:
         pickle.dump(all_valuezeroing_scores, f)
-    # rollouts
+    # Value Zeroing+ rollout
     with open(f'{SAVE_SCORES_PATH}{CHECKPOINT}_rollout_{METRIC.capitalize()}_valuezeroing.pkl', 'wb') as f:
         pickle.dump(all_rollout_valuezeroing_scores, f)
