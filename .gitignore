@@ -1,4 +1,6 @@
 *.out
-directory/*/
-data/*/
+directory/*
+data/processed_blimp/*
+data/neuralcoref/*
+data/install.sh
 __pycache__/

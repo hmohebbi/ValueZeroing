@@ -1,1 +1,2 @@
 transformers==4.15.0
+neuralcoref==4.1.0
