@@ -1,7 +1,7 @@
 
 SELECTED_GPU = 0
 MODEL_NAME = 'bert'
-FIXED = False # True for pre-trained model and False for finetuned model
+FIXED = False # True for pre-trained model and False for fine-tuned model
 METRIC = 'cosine' 
 TASK = "NA"
 LOAD_MODEL_PATH = f"directory/models/{MODEL_NAME}/{TASK}/full_forseqclassification_finetuned_MLM.pt"
@@ -107,7 +107,7 @@ valuezeroing_scores = score_matrix / np.sum(score_matrix, axis=-1, keepdims=True
 rollout_valuezeroing_scores = compute_joint_attention(valuezeroing_scores, res=False)
 
 
-# Plot:
+# Plot
 cmap = "Blues"
 all_tokens = [tokenizer.convert_ids_to_tokens(t) for t in inputs['input_ids']]
 LAYERS = list(range(12))

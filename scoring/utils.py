@@ -1,7 +1,6 @@
 import numpy as np
 
 NUM_LABELS = {
-    "aga": 2,
     "ana": 2,
     "dna": 2,
     "dnaa": 2,
@@ -17,14 +16,12 @@ blimp_to_label = {
 
 MODEL_PATH = {
     'bert': 'bert-base-uncased',
+    'roberta': 'roberta-base',
+    'electra': 'google/electra-base-generator',
 }
 
-GLUE_TASKS = [
-    "sst2",
-]
 
 BLIMP_TASKS = [
-    "aga",
     "ana",
     'dna',
     "dnaa",
@@ -33,28 +30,7 @@ BLIMP_TASKS = [
     "NA",
 ]
 
-def sst2_to_features(data, tokenizer, max_length, min_length=None, input_masking=False, mlm=False):
-    all_features = []
-    for example in data:
-        text = example['sentence']
-        inputs = tokenizer(text, padding="max_length", max_length=max_length, truncation=True) if max_length is not None else tokenizer(text)
-        inputs['labels'] = example['label']
-        if min_length is not None and len(inputs['input_ids']) <= min_length:
-            continue
-        all_features.append(inputs)
-    return all_features[0] if len(all_features) == 1 else all_features
-
-def mnli_to_features(data, tokenizer, max_length, input_masking=False):
-    all_features = []
-    for example in data:
-        text = (example['premise'], example['hypothesis'])
-        inputs = tokenizer(*text, padding="max_length", max_length=max_length, truncation=True) if max_length is not None else tokenizer(*text)
-        inputs['labels'] = example['label']
-        all_features.append(inputs)
-    return all_features[0] if len(all_features) == 1 else all_features
-
-
-def blimp_to_features(data, tokenizer, max_length, input_masking, mlm): # warning: It's bert-specific. In case you're using another PLM, be aware of their tokenizer behaviour
+def blimp_to_features(data, tokenizer, max_length, input_masking, mlm):
     all_features = []
     for example in data:
         text = example['sentence_good']
@@ -81,7 +57,7 @@ def blimp_to_features(data, tokenizer, max_length, input_masking, mlm): # warnin
         inputs = {}
         inputs['input_ids'] = tokens if max_length is None else tokens + [tokenizer.pad_token_id]*(max_length - length)
         inputs['attention_mask'] = [1]*length if max_length is None else [1]*length + [0]*(max_length - length)
-        inputs['token_type_ids'] = [0]*length if max_length is None else [0]*max_length
+        # inputs['token_type_ids'] = [0]*length if max_length is None else [0]*max_length
         inputs['target_index'] = target_index
         inputs['labels'] = tokenizer.convert_tokens_to_ids(example['good_word']) if mlm else blimp_to_label[example['labels']]
         inputs['good_token_id'] = tokenizer.convert_tokens_to_ids(example['good_word'])
@@ -94,9 +70,6 @@ def blimp_to_features(data, tokenizer, max_length, input_masking, mlm): # warnin
 
 
 PREPROCESS_FUNC = {
-    'sst2': sst2_to_features,
-    'mnli': mnli_to_features,
-    'aga': blimp_to_features,
     'ana': blimp_to_features,
     'dna': blimp_to_features,
     'dnaa': blimp_to_features,

@@ -8,6 +8,7 @@ parser.add_argument("--CHECKPOINT")
 parser.add_argument("--METRIC")
 parser.add_argument("--INPUT_MASKING", action="store_true")
 parser.add_argument("--MLM", action="store_true")
+parser.add_argument("--SAVE_SCORES", action="store_true")
 parser.add_argument("--GPU", default=0, type=int)
 args = parser.parse_args()
 
@@ -19,6 +20,7 @@ CHECKPOINT = args.CHECKPOINT
 METRIC = args.METRIC
 INPUT_MASKING = args.INPUT_MASKING
 MLM = args.MLM
+SAVE_SCORES = args.SAVE_SCORES
 SELECTED_GPU = args.GPU
 
 # SELECTED_GPU = 0
@@ -30,6 +32,7 @@ SELECTED_GPU = args.GPU
 # SPLIT = "test"
 # INPUT_MASKING = True
 # MLM = True
+# SAVE_SCORES = False
 
 SEED = 42
 tag = "pretrained" if FIXED else "finetuned"
@@ -37,7 +40,6 @@ if MLM:
     tag += "_MLM"
 masking_tag = "masked" if INPUT_MASKING else "full"
 LOAD_MODEL_PATH = f"/home/hmohebbi/Projects/ValueZeroing/directory/models/{MODEL_NAME}/{TASK}/{CHECKPOINT}_forseqclassification_{tag}.pt"
-SAVE_SCORES = False
 SAVE_SCORES_PATH = f"/home/hmohebbi/Projects/ValueZeroing/directory/scores/{MODEL_NAME}/{TASK}/{tag}/{masking_tag}/"
 
 
@@ -52,7 +54,7 @@ from sklearn.metrics.pairwise import cosine_distances
 import torch
 from torch.utils.data import DataLoader
 
-from utils import PREPROCESS_FUNC, MODEL_PATH, NUM_LABELS, GLUE_TASKS, BLIMP_TASKS
+from scoring.utils import PREPROCESS_FUNC, MODEL_PATH, NUM_LABELS, BLIMP_TASKS
 
 from datasets import (
     load_dataset,  
@@ -100,10 +102,8 @@ else:
 
 ### Load data
 if TASK in BLIMP_TASKS:
-    data_path = f"/home/hmohebbi/Projects/blank_out/data/processed_blimp/{TASK}"
+    data_path = f"/home/hmohebbi/Projects/ValueZeroing/data/processed_blimp/{TASK}"
     data = load_from_disk(data_path)[SPLIT]
-elif TASK in GLUE_TASKS:
-    data = load_dataset("glue", TASK, split=SPLIT)
 else:
     print("Not implemented yet!")
 data = data.shuffle(SEED)
@@ -139,7 +139,7 @@ for step, inputs in enumerate(dataloader):
     with torch.no_grad():
         outputs = model(inputs['input_ids'],
                         attention_mask=inputs['attention_mask'],
-                        token_type_ids=inputs['token_type_ids'], 
+                        # token_type_ids=inputs['token_type_ids'], 
                         output_hidden_states=True, output_attentions=False)
 
     org_hidden_states = torch.stack(outputs['hidden_states']).squeeze(1)
@@ -180,6 +180,6 @@ if SAVE_SCORES:
     # Value Zeroing
     with open(f'{SAVE_SCORES_PATH}{CHECKPOINT}_{METRIC.capitalize()}_valuezeroing.pkl', 'wb') as f:
         pickle.dump(all_valuezeroing_scores, f)
-    # Value Zeroing+ rollout
+    # Value Zeroing + rollout
     with open(f'{SAVE_SCORES_PATH}{CHECKPOINT}_rollout_{METRIC.capitalize()}_valuezeroing.pkl', 'wb') as f:
         pickle.dump(all_rollout_valuezeroing_scores, f)
