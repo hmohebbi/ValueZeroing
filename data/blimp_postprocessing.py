@@ -3,6 +3,9 @@ from datasets import load_dataset, Dataset, concatenate_datasets
 import spacy
 import neuralcoref
 from transformers import AutoTokenizer
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), "../..")))
+from utils.utils import MODEL_PATH
 
 def expand_contraction_process(example):
     example['sentence_good'] = example['sentence_good'].replace("wouldn't", "would not")
@@ -246,7 +249,8 @@ UID_PROCESSOR = {
 
 SEED = 12
 # Load Tokenizer 
-tokenizer_bert = AutoTokenizer.from_pretrained("bert-base-uncased") 
+MODEL_NAME = "bert" # "bert", "roberta", "electra"
+tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH[MODEL_NAME]) 
 
 # Load spacy
 nlp = spacy.load('en')
@@ -277,5 +281,5 @@ for task, uid in TASK_UID.items():
     
 number_dataset = number_dataset.shuffle(seed=SEED)
 number_dataset = number_dataset.train_test_split(test_size=0.5)
-number_dataset.save_to_disk(f"/home/hmohebbi/Projects/ValueZeroing/data/processed_blimp/bert/NA")
+number_dataset.save_to_disk(f"/home/hmohebbi/Projects/ValueZeroing/data/processed_blimp/{MODEL_NAME}/NA")
 
