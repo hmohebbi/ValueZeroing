@@ -54,10 +54,9 @@ from sklearn.metrics.pairwise import cosine_distances
 import torch
 from torch.utils.data import DataLoader
 
-from scoring.utils import PREPROCESS_FUNC, MODEL_PATH, NUM_LABELS, BLIMP_TASKS
+from utils.utils import PREPROCESS_FUNC, MODEL_PATH, NUM_LABELS, BLIMP_TASKS
 
 from datasets import (
-    load_dataset,  
     load_from_disk,
 )
 
@@ -102,10 +101,11 @@ else:
 
 ### Load data
 if TASK in BLIMP_TASKS:
-    data_path = f"/home/hmohebbi/Projects/ValueZeroing/data/processed_blimp/{TASK}"
+    data_path = f"/home/hmohebbi/Projects/ValueZeroing/data/processed_blimp/{MODEL_NAME}/{TASK}"
     data = load_from_disk(data_path)[SPLIT]
 else:
     print("Not implemented yet!")
+    exit()
 data = data.shuffle(SEED)
 num_labels = NUM_LABELS[TASK]
 
