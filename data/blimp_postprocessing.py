@@ -277,5 +277,5 @@ for task, uid in TASK_UID.items():
     
 number_dataset = number_dataset.shuffle(seed=SEED)
 number_dataset = number_dataset.train_test_split(test_size=0.5)
-number_dataset.save_to_disk(f"/home/hmohebbi/Projects/ValueZeroing/data/processed_blimp/NA")
+number_dataset.save_to_disk(f"/home/hmohebbi/Projects/ValueZeroing/data/processed_blimp/bert/NA")
 
