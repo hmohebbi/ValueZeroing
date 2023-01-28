@@ -1300,6 +1300,7 @@ class BertForMaskedLM(BertPreTrainedModel):
         position_ids=None,
         head_mask=None,
         inputs_embeds=None,
+        target_index=None,
         encoder_hidden_states=None,
         encoder_attention_mask=None,
         labels=None,
@@ -1332,6 +1333,8 @@ class BertForMaskedLM(BertPreTrainedModel):
 
         sequence_output = outputs[0]
         prediction_scores = self.cls(sequence_output)
+        # Added by Hosein
+        prediction_scores = prediction_scores[torch.arange(prediction_scores.size(0)), target_index]
 
         masked_lm_loss = None
         if labels is not None:
